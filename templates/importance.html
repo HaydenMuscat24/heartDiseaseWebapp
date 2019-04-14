@@ -1,0 +1,113 @@
+<head>
+    <meta charset="utf-8">
+    <title>Chart.js</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/bootstrap.min.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/personal.css') }}" type="text/css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    
+</head>
+<body>
+    <div class="row justify-content-md-center">
+        <!-- top center -->
+        <div class="col col-lg-10">
+            <div class="row">
+                <!-- The left panel for options -->
+                <div class="col col-lg-3">
+                    <div class="list-group">
+                        <a href="/" class="list-group-item list-group-item-action">
+                            Statistics Visualisation
+                        </a>
+                        <a href="importance" class="list-group-item list-group-item-action active">
+                            Feature Importance
+                        </a>
+                        <a href="prediction" class="list-group-item list-group-item-action">
+                            Make Predictions
+                        </a>
+                    </div>
+                </div>
+                <!-- the right panel with stuff -->
+                <div class="col col-lg-9 text-center">
+                    <h1 class="display-3">Importance of Each Feature</h1>
+                    <p class="lead">The correlation of each feature after a logistic regression:</p>
+
+                    <!--  the graph -->
+                    <!-- <div class="jumbotron"> -->
+                    <div class="container"height="400">
+                        <canvas id="myChart" ></canvas>
+                    </div>
+
+                    <!--  list of features -->
+                    <br><br>
+                    <h5 class="display-4">Give features to a logistic regression:</h5>
+                    <form>
+                        <input type="hidden" name="selected" value="{{selected}}">
+                        {% for feature in features %}
+                        {% if feature in selected %}
+                        <button type="submit" name="remove" value="{{feature}}" class="btn btn-info">{{feature}}</button>
+                        {% else %}
+                        <button type="submit" name="add" value="{{feature}}" class="btn btn-secondary">{{feature}}</button>
+                        {% endif %}
+                        {% endfor %}
+                    </form>
+                    <p class="lead">Resulting Accuracy: {{ accuracy }}</p>
+                    <p>Accuracy based off a 30% test set </p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    
+    <script>
+        var brightWhite = 'rgba(255, 255, 255, 0.8)';
+        var darkWhite = 'rgba(255, 255, 255, 0.2)';
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'horizontalBar',
+            data: {
+                labels: {{labels|tojson}},
+                datasets: [{
+                    // hack since im assuming first one is negatively correlated
+                    label: 'Negatively Correlated',
+                    data: {{coefficients|tojson}},
+                    backgroundColor: {{fillColors|tojson}},
+                    borderColor: {{borderColors|tojson}},
+                    borderWidth: 1
+                }, 
+                {
+                    label: 'Positively Correlated',
+                    data: [],
+                    backgroundColor: "rgba(223, 105, 26, 0.6",
+                    borderColor: "rgba(223, 105, 26, 1",
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                animation: {
+                    duration: 0
+                },
+                legend : {
+                    labels: {fontColor: brightWhite }
+                },
+                scales: {
+                    yAxes: [{
+                        gridLines: { color: darkWhite },
+                        ticks: {
+                            beginAtZero: true,
+                            fontColor: brightWhite,
+                        },
+                        stacked: true
+                    }],
+                    xAxes: [{
+                        gridLines: { color: darkWhite },
+                        ticks: { fontColor: brightWhite }, 
+                        stacked: true
+                    }]
+                }
+            }
+        });
+    </script>
+</body>
+

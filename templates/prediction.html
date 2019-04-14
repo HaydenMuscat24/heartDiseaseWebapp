@@ -1,0 +1,72 @@
+<head>
+    <meta charset="utf-8">
+    <title>Chart.js</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/bootstrap.min.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/personal.css') }}" type="text/css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    
+</head>
+<body>
+    <div class="row justify-content-md-center">
+        <!-- top center -->
+        <div class="col col-lg-10">
+            <div class="row">
+                <!-- The left panel for options -->
+                <div class="col col-lg-3">
+                    <div class="list-group">
+                        <a href="/" class="list-group-item list-group-item-action">
+                            Statistics Visualisation
+                        </a>
+                        <a href="importance" class="list-group-item list-group-item-action">
+                            Feature Importance
+                        </a>
+                        <a href="prediction" class="list-group-item list-group-item-action active">
+                            Make Predictions
+                        </a>
+                    </div>
+                </div>
+                <!-- the right panel with stuff -->
+                <div class="col col-lg-9 text-center">
+                    <h1 class="display-3">Get a Prediction</h1>
+                    <p class="lead">Prediction based off a neural network which scored 83.5% on a test set (70-30 train-test set split).</p>
+                    <p class="lead">Orange values will increase the Prediction, and blue decrease.</p>
+
+                    <!--  list of features to choose from -->
+                    <form>
+                        <div class="row">
+                            {% for feature in features %}
+                            <div class="col-6">
+                                <p class="lead">{{feature}}</p>
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                {% for subClass in subClasses[feature] %}
+                                    {% if subClass['chosen'] %}
+                                    <label class="btn btn-secondary active">
+                                        <input type="radio" value="{{ subClass['value'] }}" name="{{ feature }}" checked="">{{ subClass['name'] }}
+                                    </label>
+                                    {% else %}
+                                    <label class="btn btn-info" style="background:{{ subClass['fill'] }};border-color:{{ subClass['border'] }}" >
+                                        <input type="radio" value="{{ subClass['value'] }}" name="{{ feature }}" >{{ subClass['name'] }}
+                                    </label>
+                                    {% endif %}
+                                {% endfor %}
+                                </div>
+                            </div>
+                            {% endfor %}
+
+                            <div class="col-6">
+                                <br><br>
+                                <button type='submit' class="btn btn-primary">Predict</button>
+                            </div>
+                        </div>
+                    </form>
+                    <h4 class="display-4">Heart Disease Probability: {{prediction}}</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    
+</body>
+
